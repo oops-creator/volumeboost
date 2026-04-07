@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volume Boost</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 300px;
+      background: #111124;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      background: #0d0d1f;
+      border-bottom: 1px solid #1e1e40;
+    }
+
+    .header svg {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+    }
+
+    .header h1 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ff6b35;
+      letter-spacing: 0.4px;
+    }
+
+    /* ── Main content ────────────────────────────────────────── */
+    .content {
+      padding: 18px;
+    }
+
+    /* ── Big percentage display ──────────────────────────────── */
+    .level-display {
+      text-align: center;
+      padding: 10px 0 16px;
+    }
+
+    .level-number {
+      display: inline-block;
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1;
+      color: #ff6b35;
+      text-shadow: 0 0 24px rgba(255, 107, 53, 0.35);
+      transition: color 0.2s;
+    }
+
+    .level-pct {
+      font-size: 30px;
+      font-weight: 700;
+      color: #cc5520;
+      vertical-align: super;
+    }
+
+    .level-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #555577;
+      margin-top: 4px;
+    }
+
+    /* ── Slider ──────────────────────────────────────────────── */
+    .slider-wrapper {
+      margin-bottom: 18px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 7px;
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+      background: linear-gradient(
+        to right,
+        #ff6b35 0%,
+        #ff6b35 var(--fill, 16.67%),
+        #252545 var(--fill, 16.67%),
+        #252545 100%
+      );
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ff6b35;
+      border: 2px solid #ff8c5f;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(255, 107, 53, 0.5);
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ff6b35;
+      border: 2px solid #ff8c5f;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(255, 107, 53, 0.5);
+    }
+
+    /* Firefox range-track is split into lower/upper parts */
+    input[type="range"]::-moz-range-track {
+      height: 7px;
+      border-radius: 4px;
+      background: #252545;
+    }
+
+    input[type="range"]::-moz-range-progress {
+      height: 7px;
+      border-radius: 4px 0 0 4px;
+      background: #ff6b35;
+    }
+
+    .slider-limits {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #444466;
+      margin-top: 5px;
+    }
+
+    .slider-limits .normal-label {
+      color: #555577;
+    }
+
+    /* ── Preset buttons ──────────────────────────────────────── */
+    .presets-heading {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #444466;
+      margin-bottom: 9px;
+    }
+
+    .presets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+
+    .preset-btn {
+      background: #1a1a36;
+      border: 1px solid #26264c;
+      color: #9999bb;
+      padding: 7px 4px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .preset-btn:hover {
+      background: #2a1520;
+      border-color: #ff6b35;
+      color: #ff6b35;
+    }
+
+    .preset-btn.active {
+      background: #3a1a0d;
+      border-color: #ff6b35;
+      color: #ff6b35;
+    }
+
+    /* ── Status bar ──────────────────────────────────────────── */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 10px;
+      background: #0d0d1f;
+      border: 1px solid #1e1e40;
+      border-radius: 7px;
+      font-size: 12px;
+      color: #666688;
+    }
+
+    .status-dot {
+      flex-shrink: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #444466;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .status-dot.ready {
+      background: #44bb77;
+      box-shadow: 0 0 6px rgba(68, 187, 119, 0.6);
+    }
+
+    .status-dot.boosting {
+      background: #ff6b35;
+      box-shadow: 0 0 6px rgba(255, 107, 53, 0.6);
+    }
+
+    .status-dot.error {
+      background: #cc4444;
+      box-shadow: 0 0 6px rgba(204, 68, 68, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <!-- Inline speaker icon (matches icons/icon.svg) -->
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="64" height="64" rx="12" fill="#FF6B35"/>
+      <path d="M10 25 L23 25 L35 14 L35 50 L23 39 L10 39 Z" fill="white"/>
+      <path d="M42 21 Q53 32 42 43" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M48 15 Q63 32 48 49" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h1>Volume Boost</h1>
+  </header>
+
+  <main class="content">
+
+    <div class="level-display">
+      <span class="level-number" id="level-number">100</span><span class="level-pct">%</span>
+      <div class="level-label">Volume Level</div>
+    </div>
+
+    <div class="slider-wrapper">
+      <input
+        type="range"
+        id="volume-slider"
+        min="0"
+        max="600"
+        value="100"
+        step="5"
+        aria-label="Volume level"
+      />
+      <div class="slider-limits">
+        <span>0%</span>
+        <span class="normal-label">100% = Normal</span>
+        <span>600%</span>
+      </div>
+    </div>
+
+    <div class="presets-heading">Quick Presets</div>
+    <div class="presets" id="presets">
+      <button class="preset-btn" data-value="100">100%</button>
+      <button class="preset-btn" data-value="150">150%</button>
+      <button class="preset-btn" data-value="200">200%</button>
+      <button class="preset-btn" data-value="300">300%</button>
+      <button class="preset-btn" data-value="400">400%</button>
+      <button class="preset-btn" data-value="600">600%</button>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Connecting…</span>
+    </div>
+
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>

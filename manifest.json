@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+  "name": "Volume Boost",
+  "version": "1.0.0",
+  "description": "Boost the volume of any audio or video in your browser by up to 600%.",
+  "author": "Volume Boost",
+
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs"
+  ],
+
+  "browser_action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "icons/icon.svg",
+    "default_title": "Volume Boost"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "volumeboost@addon",
+      "strict_min_version": "57.0"
+    }
+  }
+}
